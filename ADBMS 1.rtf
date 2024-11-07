@@ -1,0 +1,354 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2818
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww28600\viewh18000\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 PROBLEM 1\
+\
+// Connect to the MongoDB server and switch to myDatabase\
+use myDatabase;\
+\
+// Initial batch insert of the given student documents into the students collection\
+db.students.insertMany([\
+  \{ name: "Raj", age: 22, subjects: ["Math", "Science"], graduated: false \},\
+  \{ name: "Priya", age: 24, subjects: ["History", "Literature"], graduated: true \},\
+  \{ name: "Anil", age: 23, subjects: ["Math", "Literature"], graduated: false \},\
+  \{ name: "Sita", age: 25, subjects: ["Science", "Math"], graduated: true \}\
+]);\
+\
+// Insert a single document for a new student with validation\
+db.students.insertOne(\{\
+  name: "Reema",\
+  age: 21,\
+  subjects: ["Math", "Science"],\
+  graduated: false\
+\});\
+\
+// Remove the document for the student named "Raj"\
+db.students.deleteOne(\{ name: "Raj" \});\
+\
+// Remove all documents for students who have not graduated\
+db.students.deleteMany(\{ graduated: false \});\
+\
+// Replace Priya's document with a new one, updating her subjects\
+db.students.replaceOne(\
+  \{ name: "Priya" \},\
+  \{ name: "Priya", age: 24, subjects: ["History", "Philosophy"], graduated: true \}\
+);\
+\
+// Update Anil's graduation status to true without replacing the entire document\
+db.students.updateOne(\
+  \{ name: "Anil" \},\
+  \{ $set: \{ graduated: true \} \}\
+);\
+\
+// Perform an upsert operation for Reema\'92s document\
+db.students.updateOne(\
+  \{ name: "Reema" \},\
+  \{ $set: \{ age: 21, subjects: ["Math", "Science"], graduated: false \} \},\
+  \{ upsert: true \}\
+);\
+\
+// Update all documents to add a new field hasMath set to true for students with "Math" as a subject\
+db.students.updateMany(\
+  \{ subjects: "Math" \},\
+  \{ $set: \{ hasMath: true \} \}\
+);\
+\
+// Return the updated document after changing Sita\'92s graduation status to false\
+db.students.findOneAndUpdate(\
+  \{ name: "Sita" \},\
+  \{ $set: \{ graduated: false \} \},\
+  \{ returnDocument: "after" \}\
+);\
+\
+// Find and display all student documents in the students collection\
+db.students.find().pretty();\
+\
+// Find and display the document for the student named "Anil"\
+db.students.find(\{ name: "Anil" \}).pretty();\
+\
+// Retrieve all students older than 22 years\
+db.students.find(\{ age: \{ $gt: 22 \} \}).pretty();\
+\
+// Retrieve students whose name is "Sita" or age is 23\
+db.students.find(\{ $or: [\{ name: "Sita" \}, \{ age: 23 \}] \}).pretty();\
+\
+// Retrieve students not older than 23 years\
+db.students.find(\{ age: \{ $lte: 23 \} \}).pretty();\
+\
+// Retrieve students whose age is not 22\
+db.students.find(\{ age: \{ $ne: 22 \} \}).pretty();\
+\
+// Retrieve documents where the nickname field does not exist\
+db.students.find(\{ nickname: \{ $exists: false \} \}).pretty();\
+\
+// Find students whose names end with "a"\
+db.students.find(\{ name: /a$/ \}).pretty();\
+\
+// Find students who have "Math" as one of their subjects\
+db.students.find(\{ subjects: "Math" \}).pretty();\
+\
+// Execute a query using $where to find students older than 22 years\
+db.students.find(\{ $where: "this.age > 22" \}).pretty();\
+\
+// Limit the number of results to 2 when retrieving student documents\
+db.students.find().limit(2).pretty();\
+\
+// Skip the first document and retrieve the rest\
+db.students.find().skip(1).pretty();\
+\
+// Sort the student documents by age in ascending order\
+db.students.find().sort(\{ age: 1 \}).pretty();\
+\
+// Advanced query: find students older than 21, limit to 2, skip the first, and sort by name\
+db.students.find(\{ age: \{ $gt: 21 \} \})\
+           .sort(\{ name: 1 \})\
+           .skip(1)\
+           .limit(2)\
+           .pretty();\
+\
+\
+\
+\
+\
+\
+\
+PROBLEM 2\
+\
+// Connect to MongoDB server and switch to placementDB\
+use placementDB;\
+\
+// 1. Inserting and Saving Documents\
+\
+// Batch insert of the given placement documents into the placements collection\
+db.placements.insertMany([\
+  \{ name: "Raj", company: "TCS", designation: "Software Engineer", salary: 6, graduated: 2023 \},\
+  \{ name: "Priya", company: "Infosys", designation: "Data Analyst", salary: 7, graduated: 2022 \},\
+  \{ name: "Anil", company: "Wipro", designation: "System Engineer", salary: 5, graduated: 2023 \},\
+  \{ name: "Sita", company: "HCL", designation: "Network Engineer", salary: 8, graduated: 2021 \}\
+]);\
+\
+// Insert a single document for a new placement with validation\
+db.placements.insertOne(\{\
+  name: "Reema",\
+  company: "Capgemini",\
+  designation: "Cyber Security Analyst",\
+  salary: 9,\
+  graduated: 2022\
+\});\
+\
+// 2. Removing Documents\
+\
+// Remove the document for the placement of "Raj"\
+db.placements.deleteOne(\{ name: "Raj" \});\
+\
+// Remove all documents for placements with a salary less than 6 LPA\
+db.placements.deleteMany(\{ salary: \{ $lt: 6 \} \});\
+\
+// 3. Updating Documents\
+\
+// Replace Priya's document to update her designation and salary\
+db.placements.replaceOne(\
+  \{ name: "Priya" \},\
+  \{ name: "Priya", company: "Infosys", designation: "Senior Data Analyst", salary: 8, graduated: 2022 \}\
+);\
+\
+// Update Anil's salary to 6 LPA without replacing the entire document\
+db.placements.updateOne(\
+  \{ name: "Anil" \},\
+  \{ $set: \{ salary: 6 \} \}\
+);\
+\
+// Perform an upsert operation to update Reema's document if it exists or insert it if it doesn't\
+db.placements.updateOne(\
+  \{ name: "Reema" \},\
+  \{ $set: \{ company: "Capgemini", designation: "Cyber Security Analyst", salary: 9, graduated: 2022 \} \},\
+  \{ upsert: true \}\
+);\
+\
+// Update all documents to add a new field highSalary set to true for placements with a salary above 7 LPA\
+db.placements.updateMany(\
+  \{ salary: \{ $gt: 7 \} \},\
+  \{ $set: \{ highSalary: true \} \}\
+);\
+\
+// Return the updated document after changing Sita's company to "Cisco"\
+db.placements.findOneAndUpdate(\
+  \{ name: "Sita" \},\
+  \{ $set: \{ company: "Cisco" \} \},\
+  \{ returnDocument: "after" \}\
+);\
+\
+// 4. Executing Queries\
+\
+// Find and display all placement documents in the placements collection\
+db.placements.find().pretty();\
+\
+// Find and display the document for the placement of "Anil"\
+db.placements.find(\{ name: "Anil" \}).pretty();\
+\
+// Retrieve all placements with a salary greater than 6 LPA\
+db.placements.find(\{ salary: \{ $gt: 6 \} \}).pretty();\
+\
+// Retrieve placements where the name is "Sita" or the graduated year is 2023\
+db.placements.find(\{ $or: [\{ name: "Sita" \}, \{ graduated: 2023 \}] \}).pretty();\
+\
+// Retrieve placements where the salary is not less than 7 LPA\
+db.placements.find(\{ salary: \{ $gte: 7 \} \}).pretty();\
+\
+// Retrieve placements where the salary is not 6 LPA\
+db.placements.find(\{ salary: \{ $ne: 6 \} \}).pretty();\
+\
+// Retrieve documents where the department field does not exist\
+db.placements.find(\{ department: \{ $exists: false \} \}).pretty();\
+\
+// Find placements where the company name ends with "o"\
+db.placements.find(\{ company: /o$/ \}).pretty();\
+\
+// Find placements where the designation includes "Engineer"\
+db.placements.find(\{ designation: /Engineer/ \}).pretty();\
+\
+// Execute a query using $where to find placements with a salary greater than 6 LPA\
+db.placements.find(\{ $where: "this.salary > 6" \}).pretty();\
+\
+// Limit the number of results to 2 when retrieving placement documents\
+db.placements.find().limit(2).pretty();\
+\
+// Skip the first document and retrieve the rest\
+db.placements.find().skip(1).pretty();\
+\
+// Sort the placement documents by salary in descending order\
+db.placements.find().sort(\{ salary: -1 \}).pretty();\
+\
+// Advanced query: Find placements with a salary greater than 5 LPA, limit to 2 results, skip the first, and sort by name in ascending order\
+db.placements.find(\{ salary: \{ $gt: 5 \} \})\
+           .sort(\{ name: 1 \})\
+           .skip(1)\
+           .limit(2)\
+           .pretty();\
+\
+\
+\
+PROBLEM. 3\
+\
+\
+// Connect to MongoDB server and switch to clubDB\
+use clubDB;\
+\
+// 1. Inserting and Saving Documents\
+\
+// Batch insert of the given club documents into the studentClubs collection\
+db.studentClubs.insertMany([\
+  \{ club: "Coding Club", president: "Raj", members: 50, established: 2019, active: true \},\
+  \{ club: "Literature Club", president: "Priya", members: 30, established: 2018, active: true \},\
+  \{ club: "Robotics Club", president: "Anil", members: 40, established: 2020, active: false \},\
+  \{ club: "Debate Club", president: "Sita", members: 20, established: 2021, active: true \}\
+]);\
+\
+// Insert a single document for a new club with validation\
+db.studentClubs.insertOne(\{\
+  club: "Photography Club",\
+  president: "Reema",\
+  members: 25,\
+  established: 2022,\
+  active: true\
+\});\
+\
+// 2. Removing Documents\
+\
+// Remove the document for the club named "Coding Club"\
+db.studentClubs.deleteOne(\{ club: "Coding Club" \});\
+\
+// Remove all documents for clubs that are not active\
+db.studentClubs.deleteMany(\{ active: false \});\
+\
+// 3. Updating Documents\
+\
+// Replace the document for "Literature Club" to update the number of members to 35\
+db.studentClubs.replaceOne(\
+  \{ club: "Literature Club" \},\
+  \{ club: "Literature Club", president: "Priya", members: 35, established: 2018, active: true \}\
+);\
+\
+// Update the number of members in "Robotics Club" to 45 without replacing the entire document\
+db.studentClubs.updateOne(\
+  \{ club: "Robotics Club" \},\
+  \{ $set: \{ members: 45 \} \}\
+);\
+\
+// Perform an upsert operation for "Photography Club" to update if exists or insert if not\
+db.studentClubs.updateOne(\
+  \{ club: "Photography Club" \},\
+  \{ $set: \{ president: "Reema", members: 25, established: 2022, active: true \} \},\
+  \{ upsert: true \}\
+);\
+\
+// Update all documents to add a new field majorEvent set to true for clubs established before 2020\
+db.studentClubs.updateMany(\
+  \{ established: \{ $lt: 2020 \} \},\
+  \{ $set: \{ majorEvent: true \} \}\
+);\
+\
+// Return the updated document after changing the president of "Debate Club" to "Neha"\
+db.studentClubs.findOneAndUpdate(\
+  \{ club: "Debate Club" \},\
+  \{ $set: \{ president: "Neha" \} \},\
+  \{ returnDocument: "after" \}\
+);\
+\
+// 4. Executing Queries\
+\
+// Find and display all club documents in the studentClubs collection\
+db.studentClubs.find().pretty();\
+\
+// Find and display the document for the club named "Robotics Club"\
+db.studentClubs.find(\{ club: "Robotics Club" \}).pretty();\
+\
+// Retrieve all clubs with more than 30 members\
+db.studentClubs.find(\{ members: \{ $gt: 30 \} \}).pretty();\
+\
+// Retrieve clubs where the president is either "Sita" or the club was established in 2020\
+db.studentClubs.find(\{ $or: [\{ president: "Sita" \}, \{ established: 2020 \}] \}).pretty();\
+\
+// Retrieve clubs that are active\
+db.studentClubs.find(\{ active: true \}).pretty();\
+\
+// Retrieve clubs that were not established in 2019\
+db.studentClubs.find(\{ established: \{ $ne: 2019 \} \}).pretty();\
+\
+// Retrieve documents where the vicePresident field does not exist\
+db.studentClubs.find(\{ vicePresident: \{ $exists: false \} \}).pretty();\
+\
+// Find clubs where the name ends with the letter "b"\
+db.studentClubs.find(\{ club: /b$/ \}).pretty();\
+\
+// Find clubs where the name includes "Club"\
+db.studentClubs.find(\{ club: /Club/ \}).pretty();\
+\
+// Execute a query using $where to find clubs with more than 20 members\
+db.studentClubs.find(\{ $where: "this.members > 20" \}).pretty();\
+\
+// Limit the number of results to 2 when retrieving club documents\
+db.studentClubs.find().limit(2).pretty();\
+\
+// Skip the first document and retrieve the rest\
+db.studentClubs.find().skip(1).pretty();\
+\
+// Sort the club documents by the number of members in ascending order\
+db.studentClubs.find().sort(\{ members: 1 \}).pretty();\
+\
+// Advanced query: Find clubs with more than 25 members, limit to 2 results, skip the first, and sort by name in ascending order\
+db.studentClubs.find(\{ members: \{ $gt: 25 \} \})\
+               .sort(\{ club: 1 \})\
+               .skip(1)\
+               .limit(2)\
+               .pretty();\
+\
+\
+\
+\
+\
+}
