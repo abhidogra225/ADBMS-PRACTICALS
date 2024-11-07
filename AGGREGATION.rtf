@@ -1,0 +1,251 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2818
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 PROBLEM 1\
+\
+// 1. Connect to MongoDB and use the database\
+use libraryDB;  // Replace with your actual database name\
+\
+// 2. Insert sample data into the 'books' collection\
+db.books.insertMany([\
+  \{\
+    title: "The Great Gatsby",\
+    author: "F. Scott Fitzgerald",\
+    genre: "Fiction",\
+    price: 10.99,\
+    published_date: new ISODate("1925-04-10")\
+  \},\
+  \{\
+    title: "1984",\
+    author: "George Orwell",\
+    genre: "Fiction",\
+    price: 8.99,\
+    published_date: new ISODate("1949-06-08")\
+  \},\
+  \{\
+    title: "To Kill a Mockingbird",\
+    author: "Harper Lee",\
+    genre: "Fiction",\
+    price: 12.99,\
+    published_date: new ISODate("1960-07-11")\
+  \},\
+  \{\
+    title: "Sapiens: A Brief History of Humankind",\
+    author: "Yuval Noah Harari",\
+    genre: "Non-Fiction",\
+    price: 14.99,\
+    published_date: new ISODate("2011-01-01")\
+  \},\
+  \{\
+    title: "Educated",\
+    author: "Tara Westover",\
+    genre: "Non-Fiction",\
+    price: 13.49,\
+    published_date: new ISODate("2018-02-20")\
+  \},\
+  \{\
+    title: "The Silent Patient",\
+    author: "Alex Michaelides",\
+    genre: "Mystery",\
+    price: 11.49,\
+    published_date: new ISODate("2019-02-05")\
+  \},\
+  \{\
+    title: "The Catcher in the Rye",\
+    author: "J.D. Salinger",\
+    genre: "Fiction",\
+    price: 9.99,\
+    published_date: new ISODate("1951-07-16")\
+  \},\
+  \{\
+    title: "The Alchemist",\
+    author: "Paulo Coelho",\
+    genre: "Fiction",\
+    price: 15.99,\
+    published_date: new ISODate("1988-01-01")\
+  \},\
+  \{\
+    title: "The Subtle Art of Not Giving a F*ck",\
+    author: "Mark Manson",\
+    genre: "Non-Fiction",\
+    price: 18.99,\
+    published_date: new ISODate("2016-09-13")\
+  \},\
+  \{\
+    title: "The Girl on the Train",\
+    author: "Paula Hawkins",\
+    genre: "Mystery",\
+    price: 10.49,\
+    published_date: new ISODate("2015-01-13")\
+  \}\
+]);\
+\
+// 3. Aggregation Queries\
+\
+// 3.1 Find the average price of all books\
+db.books.aggregate([\
+  \{ $group: \{ _id: null, averagePrice: \{ $avg: "$price" \} \} \}\
+]);\
+\
+// 3.2 Find the count of books in each genre\
+db.books.aggregate([\
+  \{ $group: \{ _id: "$genre", count: \{ $sum: 1 \} \} \}\
+]);\
+\
+// 3.3 For each genre, find the most expensive book\
+db.books.aggregate([\
+  \{ $sort: \{ price: -1 \} \},  // Sort by price in descending order\
+  \{ $group: \{ _id: "$genre", mostExpensiveBook: \{ $first: "$$ROOT" \} \} \}\
+]);\
+\
+// 3.4 Find authors who have written more than 3 books\
+db.books.aggregate([\
+  \{ $group: \{ _id: "$author", bookCount: \{ $sum: 1 \} \} \},\
+  \{ $match: \{ bookCount: \{ $gt: 3 \} \} \}\
+]);\
+\
+// 3.5 Sort books by published_date in descending order, then by price in ascending order\
+db.books.aggregate([\
+  \{ $sort: \{ published_date: -1, price: 1 \} \}\
+]);\
+\
+\
+PROBLEM 2\
+\
+\
+// 1. Connect to MongoDB and use the database\
+use ecommerceDB;  // Replace with your actual database name\
+\
+// 2. Insert sample data into the 'orders' collection\
+db.orders.insertMany([\
+  \{\
+    orderId: "O001",\
+    customerId: "C001",\
+    items: [\
+      \{ productId: "P001", productName: "Laptop", category: "Electronics", price: 1200, quantity: 1 \},\
+      \{ productId: "P002", productName: "Mouse", category: "Electronics", price: 25, quantity: 1 \}\
+    ],\
+    orderDate: new ISODate("2023-01-10T10:00:00Z"),\
+    shippingAddress: "123 Elm St, Springfield, IL 62701",\
+    status: "Delivered"\
+  \},\
+  \{\
+    orderId: "O002",\
+    customerId: "C002",\
+    items: [\
+      \{ productId: "P003", productName: "T-shirt", category: "Clothing", price: 20, quantity: 2 \},\
+      \{ productId: "P004", productName: "Jeans", category: "Clothing", price: 40, quantity: 1 \}\
+    ],\
+    orderDate: new ISODate("2023-01-15T14:30:00Z"),\
+    shippingAddress: "456 Oak St, Springfield, IL 62702",\
+    status: "Shipped"\
+  \},\
+  \{\
+    orderId: "O003",\
+    customerId: "C003",\
+    items: [\
+      \{ productId: "P005", productName: "Groceries", category: "Groceries", price: 50, quantity: 3 \},\
+      \{ productId: "P006", productName: "Bread", category: "Groceries", price: 3, quantity: 2 \}\
+    ],\
+    orderDate: new ISODate("2023-02-01T16:45:00Z"),\
+    shippingAddress: "789 Pine St, Springfield, IL 62703",\
+    status: "Delivered"\
+  \},\
+  \{\
+    orderId: "O004",\
+    customerId: "C001",\
+    items: [\
+      \{ productId: "P001", productName: "Laptop", category: "Electronics", price: 1200, quantity: 1 \}\
+    ],\
+    orderDate: new ISODate("2023-02-12T11:00:00Z"),\
+    shippingAddress: "123 Elm St, Springfield, IL 62701",\
+    status: "Pending"\
+  \},\
+  \{\
+    orderId: "O005",\
+    customerId: "C004",\
+    items: [\
+      \{ productId: "P007", productName: "Smartphone", category: "Electronics", price: 800, quantity: 1 \}\
+    ],\
+    orderDate: new ISODate("2023-02-25T13:30:00Z"),\
+    shippingAddress: "101 Maple St, Springfield, IL 62704",\
+    status: "Cancelled"\
+  \},\
+  \{\
+    orderId: "O006",\
+    customerId: "C002",\
+    items: [\
+      \{ productId: "P003", productName: "T-shirt", category: "Clothing", price: 20, quantity: 3 \}\
+    ],\
+    orderDate: new ISODate("2023-03-10T09:00:00Z"),\
+    shippingAddress: "456 Oak St, Springfield, IL 62702",\
+    status: "Delivered"\
+  \}\
+]);\
+\
+// 3. Aggregation Queries\
+\
+// 3.1 Identify the top 3 most popular product categories based on the number of items sold\
+db.orders.aggregate([\
+  \{ $unwind: "$items" \}, // Unwind the items array\
+  \{ $group: \{ _id: "$items.category", totalItemsSold: \{ $sum: "$items.quantity" \} \} \},\
+  \{ $sort: \{ totalItemsSold: -1 \} \},\
+  \{ $limit: 3 \}\
+]);\
+\
+// 3.2 Find out the total amount spent by each customer\
+db.orders.aggregate([\
+  \{ $unwind: "$items" \}, // Unwind the items array\
+  \{ $group: \{ _id: "$customerId", totalSpent: \{ $sum: \{ $multiply: ["$items.price", "$items.quantity"] \} \} \} \}\
+]);\
+\
+// 3.3 Identify the top 5 customers who've spent the most on the platform\
+db.orders.aggregate([\
+  \{ $unwind: "$items" \}, // Unwind the items array\
+  \{ $group: \{ _id: "$customerId", totalSpent: \{ $sum: \{ $multiply: ["$items.price", "$items.quantity"] \} \} \} \},\
+  \{ $sort: \{ totalSpent: -1 \} \},\
+  \{ $limit: 5 \}\
+]);\
+\
+// 3.4 Order Insights: For each month\
+// Calculate the total revenue\
+db.orders.aggregate([\
+  \{ $project: \{ month: \{ $month: "$orderDate" \}, year: \{ $year: "$orderDate" \}, items: 1 \} \},\
+  \{ $unwind: "$items" \},\
+  \{ $group: \{ _id: \{ year: "$year", month: "$month" \}, totalRevenue: \{ $sum: \{ $multiply: ["$items.price", "$items.quantity"] \} \} \} \}\
+]);\
+\
+// Identify the most sold product for each month\
+db.orders.aggregate([\
+  \{ $project: \{ month: \{ $month: "$orderDate" \}, year: \{ $year: "$orderDate" \}, items: 1 \} \},\
+  \{ $unwind: "$items" \},\
+  \{ $group: \{ _id: \{ year: "$year", month: "$month", product: "$items.productName" \}, totalQuantity: \{ $sum: "$items.quantity" \} \} \},\
+  \{ $sort: \{ "_id.year": 1, "_id.month": 1, totalQuantity: -1 \} \},\
+  \{ $group: \{ _id: \{ year: "$_id.year", month: "$_id.month" \}, mostSoldProduct: \{ $first: "$_id.product" \}, totalQuantity: \{ $first: "$totalQuantity" \} \} \}\
+]);\
+\
+// Determine the average number of items per order for each month\
+db.orders.aggregate([\
+  \{ $project: \{ month: \{ $month: "$orderDate" \}, year: \{ $year: "$orderDate" \}, itemCount: \{ $size: "$items" \} \} \},\
+  \{ $group: \{ _id: \{ year: "$year", month: "$month" \}, avgItemsPerOrder: \{ $avg: "$itemCount" \} \} \}\
+]);\
+\
+// Find out the percentage of orders that were cancelled for each month\
+db.orders.aggregate([\
+  \{ $project: \{ month: \{ $month: "$orderDate" \}, year: \{ $year: "$orderDate" \}, status: 1 \} \},\
+  \{ $group: \{ _id: \{ year: "$year", month: "$month" \}, totalOrders: \{ $sum: 1 \}, cancelledOrders: \{ $sum: \{ $cond: [\{ $eq: ["$status", "Cancelled"] \}, 1, 0] \} \} \} \} \},\
+  \{ $project: \{ _id: 1, cancelledPercentage: \{ $multiply: [\{ $divide: ["$cancelledOrders", "$totalOrders"] \}, 100] \} \} \}\
+]);\
+\
+// 3.5 Shipping Analysis: Group orders based on the zip code in the shippingAddress\
+// (assuming the zip code is the last 5 characters of the address)\
+db.orders.aggregate([\
+  \{ $project: \{ shippingZipCode: \{ $substr: ["$shippingAddress", -5, 5] \}, totalAmount: \{ $sum: \{ $multiply: ["$items.price", "$items.quantity"] \} \} \} \},\
+  \{ $group: \{ _id: "$shippingZipCode", totalOrders: \{ $sum: 1 \}, averageOrderAmount: \{ $avg: "$totalAmount" \} \} \}\
+]);\
+\
+}
