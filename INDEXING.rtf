@@ -1,0 +1,104 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2818
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 PROBLEM 1\
+\
+\
+// Connect to MongoDB server and use the appropriate database\
+use academicDB;  // Replace with your database name\
+\
+// 1. Create a single-field index on the "name" field in the students collection\
+db.students.createIndex(\{ name: 1 \});\
+\
+// Verify the creation of the single-field index on "name"\
+db.students.getIndexes();\
+\
+// 2. Create a compound index on the "major" and "gpa" fields in the students collection\
+db.students.createIndex(\{ major: 1, gpa: -1 \});\
+\
+// Verify the creation of the compound index on "major" and "gpa"\
+db.students.getIndexes();\
+\
+// 3. Create a unique index on the "email" field in the students collection\
+db.students.createIndex(\{ email: 1 \}, \{ unique: true \});\
+\
+// Verify the creation of the unique index on "email"\
+db.students.getIndexes();\
+\
+// 4. Remove duplicate entries based on the "email" field\
+// First, find duplicates based on email, then remove them.\
+db.students.aggregate([\
+  \{ $group: \{ _id: "$email", count: \{ $sum: 1 \}, docs: \{ $push: "$_id" \} \} \},\
+  \{ $match: \{ count: \{ $gt: 1 \} \} \}\
+]).forEach(function(doc) \{\
+  doc.docs.shift();  // Keep the first document and remove the rest\
+  db.students.deleteMany(\{ _id: \{ $in: doc.docs \} \});\
+\});\
+\
+// 5. Drop the unique index on the "email" field and verify its removal\
+db.students.dropIndex(\{ email: 1 \});\
+db.students.getIndexes();\
+\
+// 6. Drop the compound index on the "major" and "gpa" fields and verify its removal\
+db.students.dropIndex(\{ major: 1, gpa: -1 \});\
+db.students.getIndexes();\
+\
+// 7. Retrieve and print the index statistics for the students collection\
+db.students.indexStats();\
+\
+\
+\
+\
+\
+\
+\
+PROBLEM 2\
+\
+\
+// Connect to MongoDB server and use the appropriate database\
+use academicDB;  // Replace with your database name\
+\
+// 1. Create a single-field index on the "club_name" field in the students_club collection\
+db.students_club.createIndex(\{ club_name: 1 \});\
+\
+// Verify the creation of the single-field index on "club_name"\
+db.students_club.getIndexes();\
+\
+// 2. Create a compound index on the "club_name" and "member_count" fields in the students_club collection\
+db.students_club.createIndex(\{ club_name: 1, member_count: -1 \});\
+\
+// Verify the creation of the compound index on "club_name" and "member_count"\
+db.students_club.getIndexes();\
+\
+// 3. Create a unique index on the "email" field in the students_club collection\
+db.students_club.createIndex(\{ email: 1 \}, \{ unique: true \});\
+\
+// Verify the creation of the unique index on "email"\
+db.students_club.getIndexes();\
+\
+// 4. Remove duplicate entries from the students_club collection based on the "email" field\
+// Find duplicate entries based on email, then remove them.\
+db.students_club.aggregate([\
+  \{ $group: \{ _id: "$email", count: \{ $sum: 1 \}, docs: \{ $push: "$_id" \} \} \},\
+  \{ $match: \{ count: \{ $gt: 1 \} \} \}\
+]).forEach(function(doc) \{\
+  doc.docs.shift();  // Keep the first document and remove the rest\
+  db.students_club.deleteMany(\{ _id: \{ $in: doc.docs \} \});\
+\});\
+\
+// 5. Drop the unique index on the "email" field and verify its removal\
+db.students_club.dropIndex(\{ email: 1 \});\
+db.students_club.getIndexes();\
+\
+// 6. Drop the compound index on the "club_name" and "member_count" fields and verify its removal\
+db.students_club.dropIndex(\{ club_name: 1, member_count: -1 \});\
+db.students_club.getIndexes();\
+\
+// 7. Retrieve and print the index statistics for the students_club collection\
+db.students_club.indexStats();\
+\
+}
