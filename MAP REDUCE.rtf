@@ -1,0 +1,134 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2818
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0  PROBLEM 1:\
+\
+// Problem 1: Compute average grade per student and highest/lowest grade per subject\
+\
+// 1. Map function\
+var mapFunction1 = function() \{\
+  // Emit each student with the subject and grade\
+  emit(this.student_id, \{ totalGrades: this.grade, count: 1, grades: \{ [this.subject]: this.grade \} \});\
+\};\
+\
+// 2. Reduce function\
+var reduceFunction1 = function(student_id, values) \{\
+  var result = \{ totalGrades: 0, count: 0, grades: \{\} \};\
+\
+  values.forEach(function(value) \{\
+    result.totalGrades += value.totalGrades;\
+    result.count += value.count;\
+    for (var subject in value.grades) \{\
+      if (!result.grades[subject]) \{\
+        result.grades[subject] = \{ highest: value.grades[subject], lowest: value.grades[subject] \};\
+      \} else \{\
+        result.grades[subject].highest = Math.max(result.grades[subject].highest, value.grades[subject]);\
+        result.grades[subject].lowest = Math.min(result.grades[subject].lowest, value.grades[subject]);\
+      \}\
+    \}\
+  \});\
+\
+  // Return the average grade and highest/lowest grade for each subject\
+  return result;\
+\};\
+\
+// 3. Finalize function to calculate average grades\
+var finalizeFunction1 = function(key, reducedValue) \{\
+  reducedValue.averageGrade = reducedValue.totalGrades / reducedValue.count;\
+  return reducedValue;\
+\};\
+\
+// Execute MapReduce on student_grades collection\
+db.student_grades.mapReduce(\
+  mapFunction1,\
+  reduceFunction1,\
+  \{\
+    out: "average_grades_per_student",\
+    finalize: finalizeFunction1\
+  \}\
+);\
+\
+// The result will be stored in the 'average_grades_per_student' collection\
+\
+\
+\
+\
+\
+PROBLEM 2:\
+\
+// Problem 2: Compute total transaction per customer and identify highest/lowest transaction amounts\
+\
+// 1. Map function\
+var mapFunction2 = function() \{\
+  // Emit the customer_id and transaction amount\
+  emit(this.customer_id, \{ totalAmount: this.transaction_amount, highest: this.transaction_amount, lowest: this.transaction_amount \});\
+\};\
+\
+// 2. Reduce function\
+var reduceFunction2 = function(customer_id, values) \{\
+  var result = \{ totalAmount: 0, highest: -Infinity, lowest: Infinity \};\
+\
+  values.forEach(function(value) \{\
+    result.totalAmount += value.totalAmount;\
+    result.highest = Math.max(result.highest, value.highest);\
+    result.lowest = Math.min(result.lowest, value.lowest);\
+  \});\
+\
+  // Return the total transaction amount, highest, and lowest transaction values\
+  return result;\
+\};\
+\
+// Execute MapReduce on bank_transactions collection\
+db.bank_transactions.mapReduce(\
+  mapFunction2,\
+  reduceFunction2,\
+  \{\
+    out: "transaction_analysis_per_customer"\
+  \}\
+);\
+\
+// The result will be stored in the 'transaction_analysis_per_customer' collection\
+\
+\
+\
+PROBLEM 3:\
+\
+\
+// Problem 3: Compute total purchases per customer and identify max/min purchase values\
+\
+// 1. Map function\
+var mapFunction3 = function() \{\
+  // Emit the customer_id and purchase amount\
+  emit(this.customer_id, \{ totalPurchases: this.purchase_amount, maxPurchase: this.purchase_amount, minPurchase: this.purchase_amount \});\
+\};\
+\
+// 2. Reduce function\
+var reduceFunction3 = function(customer_id, values) \{\
+  var result = \{ totalPurchases: 0, maxPurchase: -Infinity, minPurchase: Infinity \};\
+\
+  values.forEach(function(value) \{\
+    result.totalPurchases += value.totalPurchases;\
+    result.maxPurchase = Math.max(result.maxPurchase, value.maxPurchase);\
+    result.minPurchase = Math.min(result.minPurchase, value.minPurchase);\
+  \});\
+\
+  // Return the total purchases, max, and min purchase values\
+  return result;\
+\};\
+\
+// Execute MapReduce on ecommerce_sales collection\
+db.ecommerce_sales.mapReduce(\
+  mapFunction3,\
+  reduceFunction3,\
+  \{\
+    out: "purchase_analysis_per_customer"\
+  \}\
+);\
+\
+// The result will be stored in the 'purchase_analysis_per_customer' collection\
+\
+}
